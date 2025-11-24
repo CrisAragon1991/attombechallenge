@@ -8,14 +8,14 @@ export class FireStoreRepository implements ITodoRepository {
   
   private collectionName = 'todos';
   private inicialized = false;
+  private serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT as string);
+  
   constructor() {
-    // In production (Cloud Run) the runtime will have Application Default
-    // Credentials when the service account is attached to the service. In CI
-    // we authenticate earlier in the workflow (credentials_json) so calling
-    // initializeApp without params uses ADC. For local dev you can set
-    // GOOGLE_APPLICATION_CREDENTIALS to point to your JSON file.
     try {
-      admin.initializeApp();
+      this.serviceAccount.private_key = this.serviceAccount.private_key.replace(/\\n/g, '\n');
+      admin.initializeApp({
+        credential: admin.credential.cert(this.serviceAccount),
+      });
       this.inicialized = true;
     } catch (err) {
       if (err && String(err).includes('already exists')) {
