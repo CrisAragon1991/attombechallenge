@@ -1,0 +1,7 @@
+node_modules
+dist
+*.log
+atomchatchallengecredentials.json
+.env
+/.github
+README.md
