@@ -1,12 +1,14 @@
 import express from 'express';
 import { TodoController } from '../TodoController';
 import { CreateTodoInput } from '../../domain/todo/Todo';
+import { authenticateJWT } from '../../shared/authenticateJWT';
 
 export function createTodoRouter(controller: TodoController) {
   const router = express.Router();
 
+  router.use(authenticateJWT);
+
   router.post('/', async (req, res) => {
-    // Map and validate incoming body into domain CreateTodoInput
     const body = req.body;
     
     const input: CreateTodoInput = {

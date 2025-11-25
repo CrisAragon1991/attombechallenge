@@ -14,11 +14,13 @@ import { CreateUserUseCase } from './application/usecases/CreateUserUseCase';
 import { UserController } from './presentation/UserController';
 import { createUserRouter } from './presentation/express/UserRouter';
 import { FindUserByEmailUseCase } from './application/usecases/FindUserByEmailUseCase';
+import { InitFireStore } from './infra/InitFireStore';
 
 async function main() {
 
   const app = express();
   app.use(express.json());
+  new InitFireStore();
 
   // Register dependencies in the DI container (use Firestore-backed repository)
   container.registerSingleton(INTERFACETOKENS.ITodoRepository, ToDoFireStoreRepository);
@@ -33,6 +35,7 @@ async function main() {
   container.register('TodoController', { useClass: TodoController });
   container.register('UserController', { useClass: UserController });
   
+
   const controller = container.resolve(TodoController);
   const userController = container.resolve(UserController);
 

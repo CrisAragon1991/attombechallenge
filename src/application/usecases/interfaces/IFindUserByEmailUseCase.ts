@@ -1,3 +1,5 @@
+import { User } from "../../../domain/user/User";
+
 export interface IFindUserByEmailUseCase {
-  execute(email: string): Promise<string>; // returns token
+  execute(email: string): Promise<User>;
 }
