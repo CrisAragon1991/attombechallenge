@@ -60,8 +60,18 @@ export class ToDoFireStoreRepository implements ITodoRepository {
   }
 
   async update(todo: Todo): Promise<void> {
-    // Keep semantics simple: reuse save which does a merge
-    await this.save(todo);
+    const docRef = this.collection().doc(todo.id);
+    const doc = await docRef.get();
+    if (!doc.exists) {
+      throw new Error('Todo not found');
+    }
+    const data = {
+      name: todo.name,
+      description: todo.description ?? null,
+      updatedAt: admin.firestore.Timestamp.fromDate(todo.updatedAt),
+      stateId: todo.stateId,
+    } as FirebaseFirestore.DocumentData;
+    await docRef.update(data);
   }
 
   async delete(id: string): Promise<void> {
