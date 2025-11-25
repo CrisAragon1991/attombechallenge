@@ -1,4 +1,4 @@
-export const TOKENS = {
+export const INTERFACETOKENS = {
   ITodoRepository: 'ITodoRepository',
   ICreateTodoUseCase: 'ICreateTodoUseCase',
   IGetTodosUseCase: 'IGetTodosUseCase',

@@ -2,11 +2,11 @@ import { ITodoRepository } from '../..//domain/todo/ITodoRepository';
 import { Todo, UpdateTodoInput } from '../../domain/todo/Todo';
 import { injectable, inject } from 'tsyringe';
 import { IUpdateTodoUseCase } from './interfaces/IUpdateTodoUseCase';
-import { TOKENS } from '../../shared/diTokens';
+import { INTERFACETOKENS } from '../../shared/InterfaceTokens';
 
 @injectable()
 export class UpdateTodoUseCase implements IUpdateTodoUseCase {
-  constructor(@inject(TOKENS.ITodoRepository) private repo: ITodoRepository) {}
+  constructor(@inject(INTERFACETOKENS.ITodoRepository) private repo: ITodoRepository) {}
 
   async execute(input: UpdateTodoInput): Promise<Todo> {
     const existing = await this.repo.findById(input.id);

@@ -3,11 +3,11 @@ import { Todo, TodoProps, CreateTodoInput } from '../../domain/todo/Todo';
 import { generateId } from '../../shared/id';
 import { injectable, inject } from 'tsyringe';
 import { ICreateTodoUseCase } from './interfaces/ICreateTodoUseCase';
-import { TOKENS } from '../../shared/diTokens';
+import { INTERFACETOKENS } from '../../shared/InterfaceTokens';
 
 @injectable()
 export class CreateTodoUseCase implements ICreateTodoUseCase {
-  constructor(@inject(TOKENS.ITodoRepository) private repo: ITodoRepository) {}
+  constructor(@inject(INTERFACETOKENS.ITodoRepository) private repo: ITodoRepository) {}
 
   async execute(input: CreateTodoInput): Promise<Todo> {
     const now = new Date();

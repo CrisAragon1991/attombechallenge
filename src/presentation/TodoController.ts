@@ -4,15 +4,15 @@ import { ICreateTodoUseCase } from '../application/usecases/interfaces/ICreateTo
 import { IGetTodosUseCase } from '../application/usecases/interfaces/IGetTodosUseCase';
 import { IUpdateTodoUseCase } from '../application/usecases/interfaces/IUpdateTodoUseCase';
 import { IDeleteTodoUseCase } from '../application/usecases/interfaces/IDeleteTodoUseCase';
-import { TOKENS } from '../shared/diTokens';
+import { INTERFACETOKENS } from '../shared/InterfaceTokens';
 
 @injectable()
 export class TodoController {
   constructor(
-    @inject(TOKENS.ICreateTodoUseCase) private createUseCase: ICreateTodoUseCase,
-    @inject(TOKENS.IGetTodosUseCase) private getUseCase: IGetTodosUseCase,
-    @inject(TOKENS.IUpdateTodoUseCase) private updateUseCase: IUpdateTodoUseCase,
-    @inject(TOKENS.IDeleteTodoUseCase) private deleteUseCase: IDeleteTodoUseCase,
+    @inject(INTERFACETOKENS.ICreateTodoUseCase) private createUseCase: ICreateTodoUseCase,
+    @inject(INTERFACETOKENS.IGetTodosUseCase) private getUseCase: IGetTodosUseCase,
+    @inject(INTERFACETOKENS.IUpdateTodoUseCase) private updateUseCase: IUpdateTodoUseCase,
+    @inject(INTERFACETOKENS.IDeleteTodoUseCase) private deleteUseCase: IDeleteTodoUseCase,
   ) {}
 
   async createTodo(input: CreateTodoInput) {

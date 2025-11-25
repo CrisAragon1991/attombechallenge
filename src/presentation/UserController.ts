@@ -1,13 +1,13 @@
 import { injectable, inject } from 'tsyringe';
 import { ICreateUserUseCase } from '../application/usecases/interfaces/ICreateUserUseCase';
 import { IFindUserByEmailUseCase } from '../application/usecases/interfaces/IFindUserByEmailUseCase';
-import { TOKENS } from '../shared/diTokens';
+import { INTERFACETOKENS } from '../shared/InterfaceTokens';
 
 @injectable()
 export class UserController {
   constructor(
-    @inject(TOKENS.ICreateUserUseCase) private createUser: ICreateUserUseCase,
-    @inject(TOKENS.IFindUserByEmailUseCase) private findByEmail: IFindUserByEmailUseCase,
+    @inject(INTERFACETOKENS.ICreateUserUseCase) private createUser: ICreateUserUseCase,
+    @inject(INTERFACETOKENS.IFindUserByEmailUseCase) private findByEmail: IFindUserByEmailUseCase,
   ) {}
 
   async register(email: string) {
