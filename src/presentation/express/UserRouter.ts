@@ -30,5 +30,18 @@ export function createUserRouter(controller: UserController) {
     }
   });
 
+  router.post('/refresh-token', async (req, res) => {
+    try {
+      var { refreshToken } = req.body;
+      const user = await controller.refreshToken(refreshToken);
+      const token = generateToken(user); 
+      refreshToken = generateToken(user, '24h'); 
+      const response: GeneralResponse<{ token: string, refreshToken: string, email: string }> = { success: true, data: { token, refreshToken, email: user.email } };
+      res.json(response);
+    } catch (err) {
+      res.status(401).json({ success: false, error: String(err) });
+    }
+  });
+
   return router;
 }

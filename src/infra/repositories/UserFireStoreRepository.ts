@@ -12,6 +12,10 @@ export class UserFireStoreRepository implements IUserRepository {
   }
 
   async save(user: User): Promise<void> {
+    const existing = await this.findByEmail(user.email);
+    if (existing) {
+      throw new Error('User with this email already exists');
+    }
     const data = {
       email: user.email,
       createdAt: admin.firestore.Timestamp.fromDate(user.createdAt),

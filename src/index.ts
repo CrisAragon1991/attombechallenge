@@ -15,6 +15,7 @@ import { UserController } from './presentation/UserController';
 import { createUserRouter } from './presentation/express/UserRouter';
 import { FindUserByEmailUseCase } from './application/usecases/FindUserByEmailUseCase';
 import { InitFireStore } from './infra/InitFireStore';
+import { RefreshTokenUseCase } from './application/usecases/RefreshTokenUseCase';
 
 async function main() {
 
@@ -31,7 +32,7 @@ async function main() {
   container.registerSingleton(INTERFACETOKENS.IUserRepository, UserFireStoreRepository);
   container.register(INTERFACETOKENS.ICreateUserUseCase, { useClass: CreateUserUseCase });
   container.register(INTERFACETOKENS.IFindUserByEmailUseCase, { useClass: FindUserByEmailUseCase });
-  
+  container.register(INTERFACETOKENS.IRefreshTokenUseCase, { useClass: RefreshTokenUseCase });
   container.register('TodoController', { useClass: TodoController });
   container.register('UserController', { useClass: UserController });
   
