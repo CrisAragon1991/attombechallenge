@@ -16,11 +16,11 @@ export function createUserRouter(controller: UserController) {
     }
   });
 
-  router.post('/user-search', async (req, res) => {
+  router.post('/search', async (req, res) => {
     try {
       const email = String(req.body.email);
       const token = await controller.login(email);
-      const response: GeneralResponse<{ token: string }> = { success: true, data: { token } };
+      const response: GeneralResponse<{ token: string, email: string }> = { success: true, data: { token, email } };
       res.json(response);
     } catch (err) {
       res.status(404).json({ success: false, error: String(err) });
