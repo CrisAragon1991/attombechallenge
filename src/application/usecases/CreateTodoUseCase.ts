@@ -19,7 +19,6 @@ export class CreateTodoUseCase implements ICreateTodoUseCase {
       updatedAt: now,
       stateId: input.stateId,
     };
-
     const todo = new Todo(props);
     await this.repo.save(todo);
     return todo;

@@ -9,14 +9,14 @@ import { INTERFACETOKENS } from '../shared/InterfaceTokens';
 @injectable()
 export class TodoController {
   constructor(
-    @inject(INTERFACETOKENS.ICreateTodoUseCase) private createUseCase: ICreateTodoUseCase,
+    @inject(INTERFACETOKENS.ICreateTodoUseCase) private createTodoUseCase: ICreateTodoUseCase,
     @inject(INTERFACETOKENS.IGetTodosUseCase) private getUseCase: IGetTodosUseCase,
     @inject(INTERFACETOKENS.IUpdateTodoUseCase) private updateUseCase: IUpdateTodoUseCase,
     @inject(INTERFACETOKENS.IDeleteTodoUseCase) private deleteUseCase: IDeleteTodoUseCase,
   ) {}
 
   async createTodo(input: CreateTodoInput) {
-    return this.createUseCase.execute(input);
+    return this.createTodoUseCase.execute(input);
   }
 
   async listTodos() {

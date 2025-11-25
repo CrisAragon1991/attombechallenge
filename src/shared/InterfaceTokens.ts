@@ -1,6 +1,6 @@
 export const INTERFACETOKENS = {
   ITodoRepository: 'ITodoRepository',
-  ICreateTodoUseCase: 'ICreateUserUseCase',
+  ICreateTodoUseCase: 'ICreateTodoUseCase',
   IGetTodosUseCase: 'IGetTodosUseCase',
   IUpdateTodoUseCase: 'IUpdateTodoUseCase',
   IDeleteTodoUseCase: 'IDeleteTodoUseCase',
