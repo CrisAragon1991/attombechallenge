@@ -2,78 +2,62 @@ import express from 'express';
 import { TodoController } from '../TodoController';
 import { CreateTodoInput } from '../../domain/todo/Todo';
 import { authenticateJWT } from '../../shared/authenticateJWT';
+import { GeneralResponse } from '../../shared/GeneralResponse';
+import { asyncHandler } from '../../shared/asyncHandler';
 
 export function createTodoRouter(controller: TodoController) {
   const router = express.Router();
 
   router.use(authenticateJWT);
 
-  router.post('/', async (req, res) => {
+  router.post('/', asyncHandler(async (req, res) => {
     const body = req.body;
-    
     const input: CreateTodoInput = {
       name: String(body.name),
       description: body.description === undefined ? undefined : String(body.description),
       stateId: String(body.stateId),
     };
+    const todo = await controller.createTodo(input);
+    const response: GeneralResponse<any> = { success: true, data: todo };
+    res.status(201).json(response);
+  }));
 
-    try {
-      const todo = await controller.createTodo(input);
-      res.status(201).json(todo.toJSON());
-    } catch (err) {
-      res.status(500).json({ error: String(err) });
+  router.get('/', asyncHandler(async (req, res) => {
+    const todos = await controller.listTodos();
+    const response: GeneralResponse<any> = { success: true, data: todos };
+    res.json(response);
+  }));
+
+  router.get('/:id', asyncHandler(async (req, res) => {
+    const id = String(req.params.id);
+    const todo = await controller.getById(id);
+    if (!todo) {
+      throw new Error('Not found');
     }
-  });
+    const response: GeneralResponse<any> = { success: true, data: todo };
+    res.json(response);
+  }));
 
-  router.get('/', async (req, res) => {
-    try {
-      const todos = await controller.listTodos();
-      res.json(todos.map(t => t.toJSON()));
-    } catch (err) {
-      res.status(500).json({ error: String(err) });
-    }
-  });
+  router.put('/:id', asyncHandler(async (req, res) => {
+    const id = String(req.params.id);
+    const body = req.body;
+    const input = {
+      id,
+      name: body.name === undefined ? undefined : String(body.name),
+      description: body.description === undefined ? undefined : String(body.description),
+      stateId: body.stateId === undefined ? undefined : String(body.stateId),
+    };
+    const updated = await controller.updateById(input);
+    const response: GeneralResponse<any> = { success: true, data: updated };
+    res.json(response);
+  }));
 
-  router.get('/:id', async (req, res) => {
-    try {
-      const id = String(req.params.id);
-      const todo = await controller.getById(id);
-      if (!todo) return res.status(404).json({ error: 'Not found' });
-      res.json(todo.toJSON());
-    } catch (err) {
-      res.status(500).json({ error: String(err) });
-    }
-  });
-
-  router.put('/:id', async (req, res) => {
-    try {
-      const id = String(req.params.id);
-      const body = req.body;
-      const input = {
-        id,
-        name: body.name === undefined ? undefined : String(body.name),
-        description: body.description === undefined ? undefined : String(body.description),
-        stateId: body.stateId === undefined ? undefined : String(body.stateId),
-      };
-
-      const updated = await controller.updateById(input);
-      res.json(updated.toJSON());
-    } catch (err) {
-      if (String(err).includes('not found')) return res.status(404).json({ error: 'Not found' });
-      res.status(500).json({ error: String(err) });
-    }
-  });
-
-  router.delete('/:id', async (req, res) => {
-    try {
-      const id = String(req.params.id);
-      await controller.deleteById(id);
-      res.status(204).send();
-    } catch (err) {
-      if (String(err).includes('not found')) return res.status(404).json({ error: 'Not found' });
-      res.status(500).json({ error: String(err) });
-    }
-  });
+  router.delete('/:id', asyncHandler(async (req, res) => {
+    const id = String(req.params.id);
+    await controller.deleteById(id);
+    const response: GeneralResponse<any> = { success: true, data: null };
+    res.json(response);
+  }));
 
   return router;
 }
