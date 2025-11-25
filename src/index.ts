@@ -1,5 +1,6 @@
 import 'reflect-metadata';
 import express from 'express';
+import corsMiddleware from './infra/cors';
 import { container } from 'tsyringe';
 import { ToDoFireStoreRepository } from './infra/repositories/ToDoFireStoreRepository';
 import { CreateTodoUseCase } from './application/usecases/CreateTodoUseCase';
@@ -21,6 +22,7 @@ async function main() {
 
   const app = express();
   app.use(express.json());
+  app.use(corsMiddleware);
   new InitFireStore();
 
   // Register dependencies in the DI container (use Firestore-backed repository)
