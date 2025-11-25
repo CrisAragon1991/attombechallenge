@@ -6,5 +6,8 @@ exports.TOKENS = {
     ICreateTodoUseCase: 'ICreateTodoUseCase',
     IGetTodosUseCase: 'IGetTodosUseCase',
     IUpdateTodoUseCase: 'IUpdateTodoUseCase',
-    IDeleteTodoUseCase: 'IDeleteTodoUseCase'
+    IDeleteTodoUseCase: 'IDeleteTodoUseCase',
+    IUserRepository: 'IUserRepository',
+    ICreateUserUseCase: 'ICreateUserUseCase',
+    IFindUserByEmailUseCase: 'IFindUserByEmailUseCase',
 };

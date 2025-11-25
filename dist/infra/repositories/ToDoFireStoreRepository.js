@@ -12,26 +12,28 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.FireStoreRepository = void 0;
+exports.ToDoFireStoreRepository = void 0;
 const Todo_1 = require("../../domain/todo/Todo");
 const tsyringe_1 = require("tsyringe");
 const firebase_admin_1 = __importDefault(require("firebase-admin"));
-let FireStoreRepository = class FireStoreRepository {
+let ToDoFireStoreRepository = class ToDoFireStoreRepository {
     constructor() {
         this.collectionName = 'todos';
-        this.inicialized = false;
-        // In production (Cloud Run) the runtime will have Application Default
-        // Credentials when the service account is attached to the service. In CI
-        // we authenticate earlier in the workflow (credentials_json) so calling
-        // initializeApp without params uses ADC. For local dev you can set
-        // GOOGLE_APPLICATION_CREDENTIALS to point to your JSON file.
+        if (process.env.USELOCALFILE === 'true') {
+            const serviceAccountLocal = require('../../../atomchatchallengecredentials.json');
+            this.serviceAccount = serviceAccountLocal;
+        }
+        else {
+            this.serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
+        }
         try {
-            firebase_admin_1.default.initializeApp();
-            this.inicialized = true;
+            this.serviceAccount.private_key = this.serviceAccount.private_key.replace(/\\n/g, '\n');
+            firebase_admin_1.default.initializeApp({
+                credential: firebase_admin_1.default.credential.cert(this.serviceAccount),
+            });
         }
         catch (err) {
             if (err && String(err).includes('already exists')) {
-                this.inicialized = true;
             }
             else {
                 throw new Error('Failed to initialize firebase-admin. Set GOOGLE_APPLICATION_CREDENTIALS for local dev or ensure Cloud Run has a service account with Firestore access.');
@@ -90,8 +92,8 @@ let FireStoreRepository = class FireStoreRepository {
         await this.collection().doc(id).delete();
     }
 };
-exports.FireStoreRepository = FireStoreRepository;
-exports.FireStoreRepository = FireStoreRepository = __decorate([
+exports.ToDoFireStoreRepository = ToDoFireStoreRepository;
+exports.ToDoFireStoreRepository = ToDoFireStoreRepository = __decorate([
     (0, tsyringe_1.injectable)(),
     __metadata("design:paramtypes", [])
-], FireStoreRepository);
+], ToDoFireStoreRepository);

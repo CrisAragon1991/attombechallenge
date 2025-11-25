@@ -4,7 +4,7 @@ import { injectable } from 'tsyringe';
 import admin from 'firebase-admin';
 
 @injectable()
-export class FireStoreRepository implements ITodoRepository {
+export class ToDoFireStoreRepository implements ITodoRepository {
   
   private collectionName = 'todos';
   private serviceAccount;
