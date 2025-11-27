@@ -46,7 +46,7 @@ async function main() {
 
   app.use('/todos', createTodoRouter(controller));
 
-  const port = process.env.PORT ? Number(process.env.PORT) : 3000;
+  const port = process.env.PORT ? Number(process.env.PORT) : 8080;
 
   app.listen(port, () => {
     console.log(`Server listening on http://localhost:${port}`);

@@ -1,12 +1,19 @@
+
 import admin from 'firebase-admin';
+import fs from 'fs';
 
 export class InitFireStore {
 
     private serviceAccount;
 
     constructor() {
-        if (process.env.USELOCALFILE === 'true') {
-            const serviceAccountLocal = require('../../atomchatchallengecredentials.json');
+        const localFilePath = require('path').resolve(__dirname, '../../atomchatchallengecredentials.json');
+        if (
+            fs.existsSync(localFilePath) ||
+            process.env.USELOCALFILE === 'true'
+            
+        ) {
+            const serviceAccountLocal = require(localFilePath);
             this.serviceAccount = serviceAccountLocal;
         } else {
             this.serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT as string);
