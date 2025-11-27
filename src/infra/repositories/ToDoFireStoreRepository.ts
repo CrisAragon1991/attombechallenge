@@ -48,7 +48,7 @@ export class ToDoFireStoreRepository implements ITodoRepository {
   async findAllByUserId(userId: string): Promise<Todo[]> {
     const snap = await this.collection()
       .where('userId', '==', userId)
-      .orderBy('createdAt', 'asc')
+      .orderBy('createdAt', 'desc')
       .get();
     const result: Todo[] = [];
     snap.forEach(doc => {
