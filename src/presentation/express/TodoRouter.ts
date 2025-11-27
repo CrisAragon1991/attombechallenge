@@ -12,32 +12,38 @@ export function createTodoRouter(controller: TodoController) {
 
   router.use(authenticateJWT);
 
+
   router.post(
     '/',
     validationMiddleware(val.validacionesTodoCreate),
     asyncHandler(async (req, res) => {
       const input: CreateTodoInput = req.requestObjectData;
-      const todo = await controller.createTodo(input);
+      const userId = req.user?.id as string;
+      const todo = await controller.createTodo(input, userId);
       const response: GeneralResponse<any> = { success: true, data: todo };
       res.status(201).json(response);
     })
   );
 
+
   router.get(
     '/',
     asyncHandler(async (req, res) => {
-      const todos = await controller.listTodos();
+      const userId = req.user?.id as string;
+      const todos = await controller.listTodos(userId);
       const response: GeneralResponse<any> = { success: true, data: todos };
       res.json(response);
     })
   );
+
 
   router.get(
     '/:id',
     validationMiddleware(val.validacionesId),
     asyncHandler(async (req, res) => {
       const id = req.requestObjectData.id ?? req.params.id;
-      const todo = await controller.getById(id);
+      const userId = req.user?.id as string;
+      const todo = await controller.getById(id, userId);
       if (!todo) {
         throw new Error('Not found');
       }
@@ -46,23 +52,27 @@ export function createTodoRouter(controller: TodoController) {
     })
   );
 
+
   router.put(
     '/:id',
     validationMiddleware(val.validacionesTodoUpdate),
     asyncHandler(async (req, res) => {
       const input = { ...req.requestObjectData, id: req.params.id };
-      const updated = await controller.updateById(input);
+      const userId = req.user?.id as string;
+      const updated = await controller.updateById(input, userId);
       const response: GeneralResponse<any> = { success: true, data: updated };
       res.json(response);
     })
   );
+
 
   router.delete(
     '/:id',
     validationMiddleware(val.validacionesId),
     asyncHandler(async (req, res) => {
       const id = req.requestObjectData.id ?? req.params.id;
-      await controller.deleteById(id);
+      const userId = req.user?.id as string;
+      await controller.deleteById(id, userId);
       const response: GeneralResponse<any> = { success: true, data: null };
       res.json(response);
     })

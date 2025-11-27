@@ -11,11 +11,13 @@ export class UpdateTodoUseCase implements IUpdateTodoUseCase {
   async execute(input: UpdateTodoInput): Promise<Todo> {
     const existing = await this.repo.findById(input.id);
     if (!existing) throw new Error('Todo not found');
+    if (existing.userId !== input.userId) throw new Error('Unauthorized');
 
     existing.update({
       name: input.name,
       description: input.description,
       stateId: input.stateId,
+      userId: input.userId,
     });
 
     await this.repo.update(existing);

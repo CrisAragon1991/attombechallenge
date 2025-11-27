@@ -1,3 +1,4 @@
+
 import { ITodoRepository } from '../../domain/todo/ITodoRepository';
 import { Todo } from '../../domain/todo/Todo';
 import { injectable, inject } from 'tsyringe';
@@ -8,7 +9,7 @@ import { INTERFACETOKENS } from '../../shared/InterfaceTokens';
 export class GetTodosUseCase implements IGetTodosUseCase {
   constructor(@inject(INTERFACETOKENS.ITodoRepository) private repo: ITodoRepository) {}
 
-  async execute(): Promise<Todo[]> {
-    return this.repo.findAll();
+  async execute(userId: string): Promise<Todo[]> {
+    return this.repo.findAllByUserId(userId);
   }
 }

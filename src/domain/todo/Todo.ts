@@ -1,3 +1,4 @@
+
 export type TodoProps = {
   id: string;
   name: string;
@@ -5,19 +6,24 @@ export type TodoProps = {
   createdAt: Date;
   updatedAt: Date;
   stateId: string;
+  userId: string;
 };
+
 
 export type CreateTodoInput = {
   name: string;
   description?: string;
   stateId: string;
+  userId: string;
 };
+
 
 export type UpdateTodoInput = {
   id: string;
   name?: string;
   description?: string;
   stateId?: string;
+  userId: string;
 };
 
 export class Todo {
@@ -51,10 +57,16 @@ export class Todo {
     return this.props.stateId;
   }
 
+  get userId(): string {
+    return this.props.userId;
+  }
+
+
   update(fields: Partial<Omit<TodoProps, 'id' | 'createdAt'>>): void {
     if (fields.name !== undefined) this.props.name = fields.name;
     if (fields.description !== undefined) this.props.description = fields.description;
     if (fields.stateId !== undefined) this.props.stateId = fields.stateId;
+    if (fields.userId !== undefined) this.props.userId = fields.userId;
     this.props.updatedAt = new Date();
   }
 

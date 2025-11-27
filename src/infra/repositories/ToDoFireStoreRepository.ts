@@ -17,12 +17,14 @@ export class ToDoFireStoreRepository implements ITodoRepository {
 
   async save(todo: Todo): Promise<void> {
     const firestore = admin.firestore();
+
     const data = {
       name: todo.name,
       description: todo.description ?? null,
       createdAt: admin.firestore.Timestamp.fromDate(todo.createdAt),
       updatedAt: admin.firestore.Timestamp.fromDate(todo.updatedAt),
       stateId: todo.stateId,
+      userId: todo.userId,
     } as FirebaseFirestore.DocumentData;
 
     await this.collection().doc(todo.id).set(data, { merge: true });
@@ -39,11 +41,12 @@ export class ToDoFireStoreRepository implements ITodoRepository {
       createdAt: data.createdAt && typeof data.createdAt.toDate === 'function' ? data.createdAt.toDate() : new Date(data.createdAt),
       updatedAt: data.updatedAt && typeof data.updatedAt.toDate === 'function' ? data.updatedAt.toDate() : new Date(data.updatedAt),
       stateId: data.stateId,
+      userId: data.userId,
     });
   }
 
-  async findAll(): Promise<Todo[]> {
-    const snap = await this.collection().get();
+  async findAllByUserId(userId: string): Promise<Todo[]> {
+    const snap = await this.collection().where('userId', '==', userId).get();
     const result: Todo[] = [];
     snap.forEach(doc => {
       const data = doc.data() as FirebaseFirestore.DocumentData;
@@ -54,6 +57,7 @@ export class ToDoFireStoreRepository implements ITodoRepository {
         createdAt: data.createdAt && typeof data.createdAt.toDate === 'function' ? data.createdAt.toDate() : new Date(data.createdAt),
         updatedAt: data.updatedAt && typeof data.updatedAt.toDate === 'function' ? data.updatedAt.toDate() : new Date(data.updatedAt),
         stateId: data.stateId,
+        userId: data.userId,
       }));
     });
     return result;
@@ -70,11 +74,16 @@ export class ToDoFireStoreRepository implements ITodoRepository {
       description: todo.description ?? null,
       updatedAt: admin.firestore.Timestamp.fromDate(todo.updatedAt),
       stateId: todo.stateId,
+      userId: todo.userId,
     } as FirebaseFirestore.DocumentData;
     await docRef.update(data);
   }
 
-  async delete(id: string): Promise<void> {
+  async deleteByUserId(id: string, userId: string): Promise<void> {
+    const doc = await this.collection().doc(id).get();
+    if (!doc.exists) throw new Error('Todo not found');
+    const data = doc.data() as FirebaseFirestore.DocumentData;
+    if (data.userId !== userId) throw new Error('Unauthorized');
     await this.collection().doc(id).delete();
   }
 }

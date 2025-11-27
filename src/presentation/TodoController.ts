@@ -15,23 +15,23 @@ export class TodoController {
     @inject(INTERFACETOKENS.IDeleteTodoUseCase) private deleteUseCase: IDeleteTodoUseCase,
   ) {}
 
-  async createTodo(input: CreateTodoInput) {
-    return this.createTodoUseCase.execute(input);
+  async createTodo(input: CreateTodoInput, userId: string) {
+    return this.createTodoUseCase.execute({ ...input, userId });
   }
 
-  async listTodos() {
-    return this.getUseCase.execute();
+  async listTodos(userId: string) {
+    return this.getUseCase.execute(userId);
   }
 
-  async getById(id: string) {
-    return this.getUseCase.execute().then(list => list.find(t => t.id === id) ?? null);
+  async getById(id: string, userId: string) {
+    return this.getUseCase.execute(userId).then(list => list.find(t => t.id === id) ?? null);
   }
 
-  async updateById(input: UpdateTodoInput) {
-    return this.updateUseCase.execute(input);
+  async updateById(input: UpdateTodoInput, userId: string) {
+    return this.updateUseCase.execute({ ...input, userId });
   }
 
-  async deleteById(id: string) {
-    return this.deleteUseCase.execute(id);
+  async deleteById(id: string, userId: string) {
+    return this.deleteUseCase.execute(id, userId);
   }
 }

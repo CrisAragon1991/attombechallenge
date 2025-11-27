@@ -1,3 +1,3 @@
 export interface IDeleteTodoUseCase {
-  execute(id: string): Promise<void>;
+  execute(id: string, userId: string): Promise<void>;
 }

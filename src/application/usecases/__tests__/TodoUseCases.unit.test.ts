@@ -16,11 +16,11 @@ describe('Todo UseCases (unit, mock)', () => {
         findAll: jest.fn(),
         update: jest.fn(),
         delete: jest.fn(),
-      };
+      } as unknown as jest.Mocked<ITodoRepository>;
       useCase = new CreateTodoUseCase(repo);
     });
     it('should save a todo and return it', async () => {
-      const input = { name: 'test', description: 'desc', stateId: '1' };
+      const input = { name: 'test', description: 'desc', stateId: '1', userId: 'user1' };
       const result = await useCase.execute(input);
       expect(result).toBeInstanceOf(Todo);
       expect(result.name).toBe('test');
@@ -35,21 +35,21 @@ describe('Todo UseCases (unit, mock)', () => {
       repo = {
         save: jest.fn(),
         findById: jest.fn(),
-        findAll: jest.fn(),
+        findAllByUserId: jest.fn(),
         update: jest.fn(),
-        delete: jest.fn(),
-      };
+        deleteByUserId: jest.fn(),
+      } as unknown as jest.Mocked<ITodoRepository>;
       useCase = new GetTodosUseCase(repo);
     });
     it('should return all todos', async () => {
       const todos = [
-        new Todo({ id: '1', name: 'A', createdAt: new Date(), updatedAt: new Date(), stateId: '1' }),
-        new Todo({ id: '2', name: 'B', createdAt: new Date(), updatedAt: new Date(), stateId: '2' })
+        new Todo({ id: '1', name: 'A', createdAt: new Date(), updatedAt: new Date(), stateId: '1', userId: 'user1' }),
+        new Todo({ id: '2', name: 'B', createdAt: new Date(), updatedAt: new Date(), stateId: '2', userId: 'user1' }),
       ];
-      repo.findAll.mockResolvedValue(todos);
-      const result = await useCase.execute();
+      repo.findAllByUserId.mockResolvedValue(todos);
+      const result = await useCase.execute('user1');
       expect(result).toEqual(todos);
-      expect(repo.findAll).toHaveBeenCalled();
+      expect(repo.findAllByUserId).toHaveBeenCalledWith('user1');
     });
   });
 
@@ -64,14 +64,14 @@ describe('Todo UseCases (unit, mock)', () => {
         findAll: jest.fn(),
         update: jest.fn(),
         delete: jest.fn(),
-      };
+      } as unknown as jest.Mocked<ITodoRepository>;
       useCase = new UpdateTodoUseCase(repo);
-      todo = new Todo({ id: '1', name: 'A', createdAt: new Date(), updatedAt: new Date(), stateId: '1' });
+      todo = new Todo({ id: '1', name: 'A', createdAt: new Date(), updatedAt: new Date(), stateId: '1', userId: 'user1' });
     });
     it('should update an existing todo', async () => {
       repo.findById.mockResolvedValue(todo);
       repo.update.mockResolvedValue();
-      const input = { id: '1', name: 'B', description: 'desc', stateId: '2' };
+      const input = { id: '1', name: 'B', description: 'desc', stateId: '2', userId: 'user1' };
       const result = await useCase.execute(input);
       expect(result.name).toBe('B');
       expect(result.description).toBe('desc');
@@ -80,7 +80,7 @@ describe('Todo UseCases (unit, mock)', () => {
     });
     it('should throw if todo not found', async () => {
       repo.findById.mockResolvedValue(null);
-      await expect(useCase.execute({ id: 'x' })).rejects.toThrow('Todo not found');
+      await expect(useCase.execute({ id: 'x', userId: 'user1' })).rejects.toThrow('Todo not found');
     });
   });
 
@@ -94,20 +94,20 @@ describe('Todo UseCases (unit, mock)', () => {
         findById: jest.fn(),
         findAll: jest.fn(),
         update: jest.fn(),
-        delete: jest.fn(),
-      };
+        deleteByUserId: jest.fn(),
+      } as unknown as jest.Mocked<ITodoRepository>;
       useCase = new DeleteTodoUseCase(repo);
-      todo = new Todo({ id: '1', name: 'A', createdAt: new Date(), updatedAt: new Date(), stateId: '1' });
+      todo = new Todo({ id: '1', name: 'A', createdAt: new Date(), updatedAt: new Date(), stateId: '1', userId: 'user1' });
     });
     it('should delete an existing todo', async () => {
       repo.findById.mockResolvedValue(todo);
-      repo.delete.mockResolvedValue();
-      await useCase.execute('1');
-      expect(repo.delete).toHaveBeenCalledWith('1');
+      repo.deleteByUserId.mockResolvedValue();
+      await useCase.execute('1', 'user1');
+      expect(repo.deleteByUserId).toHaveBeenCalledWith('1', 'user1');
     });
     it('should throw if todo not found', async () => {
       repo.findById.mockResolvedValue(null);
-      await expect(useCase.execute('x')).rejects.toThrow('Todo not found');
+      await expect(useCase.execute('x', 'user1')).rejects.toThrow('Todo not found');
     });
   });
 });

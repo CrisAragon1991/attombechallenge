@@ -26,6 +26,7 @@ jest.mock('firebase-admin', () => {
         createdAt: new Date(),
         updatedAt: new Date(),
         stateId: '1',
+        userId: 'user1',
       })
     ),
     get: jest.fn().mockResolvedValue({
@@ -38,6 +39,7 @@ jest.mock('firebase-admin', () => {
             createdAt: new Date(),
             updatedAt: new Date(),
             stateId: '1',
+            userId: 'user1',
           }),
         });
         cb({
@@ -48,10 +50,12 @@ jest.mock('firebase-admin', () => {
             createdAt: new Date(),
             updatedAt: new Date(),
             stateId: '2',
+            userId: 'user1',
           }),
         });
       },
     }),
+    where: jest.fn().mockReturnThis(),
   };
 
   const firestoreFn = () => ({
@@ -89,6 +93,7 @@ describe('ToDoFireStoreRepository (unit, firebase-admin mock)', () => {
       createdAt: new Date(),
       updatedAt: new Date(),
       stateId: '1',
+      userId: 'user1'
     });
 
     await expect(repo.save(todo)).resolves.toBeUndefined();
@@ -113,7 +118,7 @@ describe('ToDoFireStoreRepository (unit, firebase-admin mock)', () => {
   });
 
   it('should find all todos', async () => {
-    const result = await repo.findAll();
+    const result = await repo.findAllByUserId('user1');
 
     expect(Array.isArray(result)).toBe(true);
     expect(result.length).toBe(2);
@@ -136,6 +141,7 @@ describe('ToDoFireStoreRepository (unit, firebase-admin mock)', () => {
     createdAt: new Date(),
     updatedAt: new Date(),
     stateId: '2',
+    userId: 'user1'
   });
 
   await expect(repo.update(todo)).resolves.toBeUndefined();
@@ -155,6 +161,7 @@ describe('ToDoFireStoreRepository (unit, firebase-admin mock)', () => {
       createdAt: new Date(),
       updatedAt: new Date(),
       stateId: '1',
+      userId: 'user1'
     });
 
     await expect(repo.update(todo)).rejects.toThrow('Todo not found');
@@ -164,10 +171,11 @@ describe('ToDoFireStoreRepository (unit, firebase-admin mock)', () => {
     const admin = require('firebase-admin').default;
     const mockDelete = jest.fn().mockResolvedValue(undefined);
     (admin.firestore().collection() as any).doc = jest.fn(() => ({
+      get: jest.fn().mockResolvedValue({ exists: true, data: () => ({ userId: 'user1' }) }),
       delete: mockDelete,
     }));
 
-    await expect(repo.delete('1')).resolves.toBeUndefined();
+    await expect(repo.deleteByUserId('1', 'user1')).resolves.toBeUndefined();
     expect(mockDelete).toHaveBeenCalled();
   });
 });
