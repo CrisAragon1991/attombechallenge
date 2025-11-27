@@ -56,6 +56,7 @@ jest.mock('firebase-admin', () => {
       },
     }),
     where: jest.fn().mockReturnThis(),
+    orderBy: jest.fn().mockReturnThis(),
   };
 
   const firestoreFn = () => ({

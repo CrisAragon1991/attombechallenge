@@ -46,7 +46,10 @@ export class ToDoFireStoreRepository implements ITodoRepository {
   }
 
   async findAllByUserId(userId: string): Promise<Todo[]> {
-    const snap = await this.collection().where('userId', '==', userId).get();
+    const snap = await this.collection()
+      .where('userId', '==', userId)
+      .orderBy('createdAt', 'asc')
+      .get();
     const result: Todo[] = [];
     snap.forEach(doc => {
       const data = doc.data() as FirebaseFirestore.DocumentData;
